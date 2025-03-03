@@ -1,0 +1,166 @@
+.game-board {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.game-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.score-info {
+  display: flex;
+  gap: 20px;
+  font-size: 1.2em;
+}
+
+.score-info p {
+  font-weight: bold;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+  padding: 20px;
+}
+
+.card {
+  width: 100%;
+  aspect-ratio: 1;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5em;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-front {
+  background-color: #2196f3;
+  color: white;
+}
+
+.card-front::after {
+  content: "?";
+  font-size: 2em;
+  color: white;
+}
+
+.card-back {
+  background-color: white;
+  transform: rotateY(180deg);
+  border: 2px solid #e0e0e0;
+}
+
+.card-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.win-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  text-align: center;
+  z-index: 1000;
+  width: 90%;
+  max-width: 400px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  font-size: 1.5em;
+  color: #666;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .game-board {
+    padding: 10px;
+  }
+
+  .game-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .game-header h2 {
+    font-size: 1.2em;
+  }
+
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .score-info {
+    font-size: 1em;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .score-info {
+    font-size: 1em;
+    gap: 15px;
+  }
+
+  .cards-container {
+    gap: 8px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 375px) {
+  .cards-container {
+    gap: 6px;
+    padding: 6px;
+  }
+} 
