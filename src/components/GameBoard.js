@@ -16,16 +16,18 @@ const GameBoard = ({ playerName }) => {
 
   const fetchCards = async () => {
     try {
-      const response = await fetch('https://fed-team.modyo.cloud/api/content/spaces/animals/types/game/entries?per_page=20');
+      const response = await fetch('https://fed-team.modyo.cloud/api/content/spaces/animals/types/game/entries?per_page=100');
       const data = await response.json();
 
-      const cards = data.entries.slice(0, 9).map(entry => ({
+      const shuffledEntries = data.entries.sort(() => Math.random() - 0.5);
+
+      const selectedCards = shuffledEntries.slice(0, 9).map(entry => ({
         id: entry.fields.image.uuid,
         imageUrl: entry.fields.image.url,
         name: entry.fields.name || 'Card'
       }));
 
-      initializeGame(cards);
+      initializeGame(selectedCards);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching cards:', error);
@@ -44,7 +46,11 @@ const GameBoard = ({ playerName }) => {
   };
 
   const handleCardClick = (clickedCard) => {
-    if (flippedCards.length === 2 || matchedCards.includes(clickedCard.uniqueId)) return;
+    if (
+      flippedCards.length === 2 || 
+      matchedCards.includes(clickedCard.uniqueId) ||
+      flippedCards.some(card => card.uniqueId === clickedCard.uniqueId)
+    ) return;
 
     const newFlippedCards = [...flippedCards, clickedCard];
     setFlippedCards(newFlippedCards);
@@ -93,7 +99,7 @@ const GameBoard = ({ playerName }) => {
         ))}
       </div>
 
-      {matches === 8 && (
+      {matches === 9 && (
         <div className="win-message">
           ¡Felicitaciones {playerName}! Has completado el juego.
         </div>
@@ -102,4 +108,4 @@ const GameBoard = ({ playerName }) => {
   );
 };
 
-export default GameBoard; 
+export default GameBoard;
