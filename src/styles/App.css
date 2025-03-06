@@ -1,6 +1,18 @@
 .app {
   min-height: 100vh;
+  min-width: 100vw;
   background-color: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__title {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+  background-color: #2196f3;
+  color: white;
 }
 
 * {

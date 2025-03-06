@@ -36,6 +36,7 @@ const GameBoard = () => {
   const handleDifficultyChange = (e) => {
     const newDifficulty = e.target.value;
     setDifficulty(newDifficulty);
+    handleRestart();
   };
 
   const fetchCards = async () => {
@@ -126,17 +127,18 @@ const GameBoard = () => {
   }
 
   return (
-    <div className="game-board">
-      <div className="game-header">
-        <h2>Player: {playerName}</h2>
-        <div className="score-info">
-          <div className="difficulty-container">
-            <label htmlFor="difficulty">Difficulty:</label>
+    <div className="game" role="main">
+      <div className="game__header">
+        <h2 className="game__title">Player: {playerName}</h2>
+        <div className="game__score" role="status" aria-live="polite">
+          <div className="game__difficulty">
+            <label htmlFor="difficulty">Difficulty: </label>
             <select
               id="difficulty"
-              className="difficulty-selector"
+              className="game__difficulty-selector"
               value={difficulty}
               onChange={handleDifficultyChange}
+              tabIndex={0}
             >
               {Object.keys(DIFFICULTY_LEVELS).map((level) => (
                 <option key={level} value={level}>
@@ -146,18 +148,26 @@ const GameBoard = () => {
             </select>
           </div>
           <button
-            className="restart-button"
+            className={`game__button ${
+              !isGameStarted ? "game__button--disabled" : ""
+            }`}
             onClick={handleRestart}
             disabled={!isGameStarted}
+            tabIndex={0}
+            aria-label="Restart game"
           >
             Restart game
           </button>
-          <p>Errors: {errors}</p>
-          <p>Matches: {matches}</p>
+          <p className="game__score-text" aria-live="polite">
+            Errors: {errors}
+          </p>
+          <p className="game__score-text" aria-live="polite">
+            Matches: {matches}
+          </p>
         </div>
       </div>
 
-      <div className="cards-container">
+      <div className="game__grid" role="grid" aria-label="Memory game grid">
         {cards.map((card, index) => (
           <Card
             key={card.uniqueId}
@@ -170,7 +180,7 @@ const GameBoard = () => {
       </div>
 
       {matches === DIFFICULTY_LEVELS[difficulty] && (
-        <div className="win-message">
+        <div className="game__message" role="alert" aria-live="assertive">
           Congratulations {playerName}! You have completed the game.
         </div>
       )}

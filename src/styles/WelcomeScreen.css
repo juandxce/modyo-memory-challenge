@@ -1,4 +1,4 @@
-.welcome-screen {
+.welcome {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,12 +7,12 @@
   padding: 20px;
 }
 
-.welcome-screen h1 {
+.welcome__title {
   margin-bottom: 30px;
   color: #333;
 }
 
-.welcome-screen form {
+.welcome__form {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -20,14 +20,14 @@
   max-width: 300px;
 }
 
-.welcome-screen input {
+.welcome__input {
   padding: 10px;
   font-size: 16px;
   border: 2px solid #ddd;
   border-radius: 4px;
 }
 
-.welcome-screen button {
+.welcome__button {
   padding: 12px 20px;
   font-size: 16px;
   background-color: #4CAF50;
@@ -38,6 +38,6 @@
   transition: background-color 0.3s;
 }
 
-.welcome-screen button:hover {
+.welcome__button:hover {
   background-color: #45a049;
 } 
