@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
-import '../styles/WelcomeScreen.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/WelcomeScreen.css";
 
-const WelcomeScreen = ({ onNameSubmit }) => {
-  const [name, setName] = useState('');
+const WelcomeScreen = () => {
+  const navigate = useNavigate();
+  const [name, setName] = useState(() => localStorage.getItem("playerName") || "");
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("playerName");
+    if (storedName) {
+      navigate("/game");
+    }
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name.trim()) {
-      onNameSubmit(name.trim());
+      localStorage.setItem("playerName", name.trim());
+      navigate("/game");
     }
   };
 
@@ -29,4 +39,4 @@ const WelcomeScreen = ({ onNameSubmit }) => {
   );
 };
 
-export default WelcomeScreen; 
+export default WelcomeScreen;

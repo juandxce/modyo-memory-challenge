@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import Card from './Card';
-import '../styles/GameBoard.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Card from "./Card";
+import "../styles/GameBoard.css";
 
-const GameBoard = ({ playerName }) => {
+const GameBoard = () => {
+  const navigate = useNavigate();
+  const playerName = localStorage.getItem("playerName");
+
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedCards, setMatchedCards] = useState([]);
@@ -11,26 +15,34 @@ const GameBoard = ({ playerName }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!playerName) {
+      navigate("/");
+    }
+  }, [navigate, playerName]);
+
+  useEffect(() => {
     fetchCards();
   }, []);
 
   const fetchCards = async () => {
     try {
-      const response = await fetch('https://fed-team.modyo.cloud/api/content/spaces/animals/types/game/entries?per_page=100');
+      const response = await fetch(
+        "https://fed-team.modyo.cloud/api/content/spaces/animals/types/game/entries?per_page=100"
+      );
       const data = await response.json();
 
       const shuffledEntries = data.entries.sort(() => Math.random() - 0.5);
 
-      const selectedCards = shuffledEntries.slice(0, 9).map(entry => ({
+      const selectedCards = shuffledEntries.slice(0, 9).map((entry) => ({
         id: entry.fields.image.uuid,
         imageUrl: entry.fields.image.url,
-        name: entry.fields.name || 'Card'
+        name: entry.fields.name || "Card",
       }));
 
       initializeGame(selectedCards);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching cards:', error);
+      console.error("Error fetching cards:", error);
       setLoading(false);
     }
   };
@@ -40,28 +52,33 @@ const GameBoard = ({ playerName }) => {
       .sort(() => Math.random() - 0.5)
       .map((card, index) => ({
         ...card,
-        uniqueId: `${card.id}-${index}`
+        uniqueId: `${card.id}-${index}`,
       }));
     setCards(duplicatedCards);
   };
 
   const handleCardClick = (clickedCard) => {
     if (
-      flippedCards.length === 2 || 
+      flippedCards.length === 2 ||
       matchedCards.includes(clickedCard.uniqueId) ||
-      flippedCards.some(card => card.uniqueId === clickedCard.uniqueId)
-    ) return;
+      flippedCards.some((card) => card.uniqueId === clickedCard.uniqueId)
+    )
+      return;
 
     const newFlippedCards = [...flippedCards, clickedCard];
     setFlippedCards(newFlippedCards);
 
     if (newFlippedCards.length === 2) {
       if (newFlippedCards[0].id === newFlippedCards[1].id) {
-        setMatchedCards([...matchedCards, newFlippedCards[0].uniqueId, newFlippedCards[1].uniqueId]);
-        setMatches(prev => prev + 1);
+        setMatchedCards([
+          ...matchedCards,
+          newFlippedCards[0].uniqueId,
+          newFlippedCards[1].uniqueId,
+        ]);
+        setMatches((prev) => prev + 1);
         setFlippedCards([]);
       } else {
-        setErrors(prev => prev + 1);
+        setErrors((prev) => prev + 1);
         setTimeout(() => {
           setFlippedCards([]);
         }, 1000);
@@ -70,8 +87,10 @@ const GameBoard = ({ playerName }) => {
   };
 
   const isCardFlipped = (card) => {
-    return flippedCards.some(fc => fc.uniqueId === card.uniqueId) || 
-           matchedCards.includes(card.uniqueId);
+    return (
+      flippedCards.some((fc) => fc.uniqueId === card.uniqueId) ||
+      matchedCards.includes(card.uniqueId)
+    );
   };
 
   if (loading) {
@@ -87,9 +106,9 @@ const GameBoard = ({ playerName }) => {
           <p>Aciertos: {matches}</p>
         </div>
       </div>
-      
+
       <div className="cards-container">
-        {cards.map(card => (
+        {cards.map((card) => (
           <Card
             key={card.uniqueId}
             card={card}
