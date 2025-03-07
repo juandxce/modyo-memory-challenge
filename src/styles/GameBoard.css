@@ -6,13 +6,13 @@
 
 .game__header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  gap: 1rem;
   margin-bottom: 20px;
   padding: 15px;
   background-color: #f5f5f5;
   border-radius: 8px;
-  gap: 20px;
 }
 
 .game__title {
@@ -66,6 +66,24 @@
   z-index: 1000;
   width: 90%;
   max-width: 400px;
+}
+
+.game__message-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px 10px;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.game__message-close:hover {
+  opacity: 1;
 }
 
 .game__loading {
@@ -189,4 +207,13 @@
     gap: 5px;
     padding: 5px;
   }
+}
+
+.game__timer {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 1rem 0;
+  font-family: monospace;
+  color: #333;
 }

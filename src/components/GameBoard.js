@@ -11,6 +11,8 @@ const DIFFICULTY_LEVELS = {
 
 const initialDifficulty = "Medium";
 const WINNING_SOUND = new Audio("/sounds/victory.mp3");
+const BACKGROUND_MUSIC = new Audio("/sounds/background-music.mp3");
+BACKGROUND_MUSIC.loop = true;
 
 const GameBoard = () => {
   const navigate = useNavigate();
@@ -23,6 +25,11 @@ const GameBoard = () => {
   const [matches, setMatches] = useState(0);
   const [loading, setLoading] = useState(true);
   const [difficulty, setDifficulty] = useState(initialDifficulty);
+  const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] =
+    useState(false);
+  const [time, setTime] = useState(0);
+  const [timerInterval, setTimerInterval] = useState(null);
+  const [showMessage, setShowMessage] = useState(true);
 
   useEffect(() => {
     if (!playerName) {
@@ -36,17 +43,21 @@ const GameBoard = () => {
 
   useEffect(() => {
     if (matches === DIFFICULTY_LEVELS[difficulty]) {
-      console.log("WINNING_SOUND", WINNING_SOUND)
-      WINNING_SOUND.play().catch(error => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        setTimerInterval(null);
+      }
+      BACKGROUND_MUSIC.pause();
+      BACKGROUND_MUSIC.currentTime = 0;
+      WINNING_SOUND.play().catch((error) => {
         console.warn("Error playing winning sound:", error);
       });
     }
-  }, [matches, difficulty]);
+  }, [matches, difficulty, timerInterval]);
 
   const handleDifficultyChange = (e) => {
     const newDifficulty = e.target.value;
     setDifficulty(newDifficulty);
-    handleRestart();
   };
 
   const fetchCards = async () => {
@@ -85,7 +96,29 @@ const GameBoard = () => {
     setCards(duplicatedCards);
   };
 
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
   const handleCardClick = (clickedCard) => {
+    if (!timerInterval) {
+      const interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
+      setTimerInterval(interval);
+    }
+
+    if (!isBackgroundMusicPlaying) {
+      BACKGROUND_MUSIC.play().catch((error) => {
+        console.warn("Error playing background music:", error);
+      });
+      setIsBackgroundMusicPlaying(true);
+    }
+
     if (
       flippedCards.length === 2 ||
       matchedCards.includes(clickedCard.uniqueId) ||
@@ -121,16 +154,30 @@ const GameBoard = () => {
     );
   };
 
-  const isGameStarted =
-    errors > 0 || matches > 0 || difficulty !== initialDifficulty;
-
   const handleRestart = () => {
     setFlippedCards([]);
     setMatchedCards([]);
     setErrors(0);
     setMatches(0);
+    setShowMessage(true);
+    setIsBackgroundMusicPlaying(false);
+    BACKGROUND_MUSIC.pause();
+    BACKGROUND_MUSIC.currentTime = 0;
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      setTimerInterval(null);
+    }
+    setTime(0);
     fetchCards();
   };
+
+  useEffect(() => {
+    return () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+    };
+  }, [timerInterval]);
 
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -140,6 +187,7 @@ const GameBoard = () => {
     <div className="game" role="main">
       <div className="game__header">
         <h2 className="game__title">Player: {playerName}</h2>
+        <div className="game__timer">{formatTime(time)}</div>
         <div className="game__score" role="status" aria-live="polite">
           <div className="game__difficulty">
             <label htmlFor="difficulty">Difficulty: </label>
@@ -161,9 +209,9 @@ const GameBoard = () => {
             className={"game__button"}
             onClick={handleRestart}
             tabIndex={0}
-            aria-label="Restart game"
+            aria-label="Reset game"
           >
-            Restart game
+            Reset game
           </button>
           <p className="game__score-text" aria-live="polite">
             Errors: {errors}
@@ -187,10 +235,17 @@ const GameBoard = () => {
         ))}
       </div>
 
-      {matches === DIFFICULTY_LEVELS[difficulty] && (
+      {matches === DIFFICULTY_LEVELS[difficulty] && showMessage && (
         <div className="game__message" role="alert" aria-live="assertive">
+          <button
+            className="game__message-close"
+            onClick={() => setShowMessage(false)}
+            aria-label="Close message"
+          >
+            ×
+          </button>
           Congratulations {playerName}!<br />
-          You have completed the memory game.
+          You have completed the memory game in {formatTime(time)}.
         </div>
       )}
     </div>
