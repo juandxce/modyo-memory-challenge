@@ -41,6 +41,14 @@ The application will open in your default browser at `http://localhost:3000`
 - CSS3
 - HTML5
 
+## Testing
+
+Tests with Jest and React Testing Library.
+
+```bash
+npm test
+```
+
 ## License
 
 This project is licensed under the MIT License.

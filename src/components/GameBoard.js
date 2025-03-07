@@ -10,6 +10,7 @@ const DIFFICULTY_LEVELS = {
 };
 
 const initialDifficulty = "Medium";
+const WINNING_SOUND = new Audio("/sounds/victory.mp3");
 
 const GameBoard = () => {
   const navigate = useNavigate();
@@ -33,6 +34,15 @@ const GameBoard = () => {
     fetchCards();
   }, []);
 
+  useEffect(() => {
+    if (matches === DIFFICULTY_LEVELS[difficulty]) {
+      console.log("WINNING_SOUND", WINNING_SOUND)
+      WINNING_SOUND.play().catch(error => {
+        console.warn("Error playing winning sound:", error);
+      });
+    }
+  }, [matches, difficulty]);
+
   const handleDifficultyChange = (e) => {
     const newDifficulty = e.target.value;
     setDifficulty(newDifficulty);
@@ -54,7 +64,7 @@ const GameBoard = () => {
         .map((entry) => ({
           id: entry.fields.image.uuid,
           imageUrl: entry.fields.image.url,
-          name: entry.fields.name || "Card",
+          name: entry.meta.name,
         }));
 
       initializeGame(selectedCards);
@@ -148,11 +158,8 @@ const GameBoard = () => {
             </select>
           </div>
           <button
-            className={`game__button ${
-              !isGameStarted ? "game__button--disabled" : ""
-            }`}
+            className={"game__button"}
             onClick={handleRestart}
-            disabled={!isGameStarted}
             tabIndex={0}
             aria-label="Restart game"
           >
@@ -175,13 +182,15 @@ const GameBoard = () => {
             index={index}
             isFlipped={isCardFlipped(card)}
             onClick={() => handleCardClick(card)}
+            cardName={card.name}
           />
         ))}
       </div>
 
       {matches === DIFFICULTY_LEVELS[difficulty] && (
         <div className="game__message" role="alert" aria-live="assertive">
-          Congratulations {playerName}! You have completed the game.
+          Congratulations {playerName}!<br />
+          You have completed the memory game.
         </div>
       )}
     </div>
