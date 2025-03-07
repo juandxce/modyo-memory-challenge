@@ -3,6 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Card from "./Card";
 import "../styles/GameBoard.css";
 
+const DIFFICULTY_LEVELS = {
+  Easy: 6,
+  Medium: 9,
+  Hard: 18,
+};
+
+const initialDifficulty = "Medium";
+const WINNING_SOUND = new Audio("/sounds/victory.mp3");
+
 const GameBoard = () => {
   const navigate = useNavigate();
   const playerName = localStorage.getItem("playerName");
@@ -13,6 +22,7 @@ const GameBoard = () => {
   const [errors, setErrors] = useState(0);
   const [matches, setMatches] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [difficulty, setDifficulty] = useState(initialDifficulty);
 
   useEffect(() => {
     if (!playerName) {
@@ -24,20 +34,38 @@ const GameBoard = () => {
     fetchCards();
   }, []);
 
+  useEffect(() => {
+    if (matches === DIFFICULTY_LEVELS[difficulty]) {
+      console.log("WINNING_SOUND", WINNING_SOUND)
+      WINNING_SOUND.play().catch(error => {
+        console.warn("Error playing winning sound:", error);
+      });
+    }
+  }, [matches, difficulty]);
+
+  const handleDifficultyChange = (e) => {
+    const newDifficulty = e.target.value;
+    setDifficulty(newDifficulty);
+    handleRestart();
+  };
+
   const fetchCards = async () => {
     try {
       const response = await fetch(
-        "https://fed-team.modyo.cloud/api/content/spaces/animals/types/game/entries?per_page=100"
+        "https://fed-team.modyo.cloud/api/content/spaces/animals/types/game/entries?per_page=20"
       );
       const data = await response.json();
 
       const shuffledEntries = data.entries.sort(() => Math.random() - 0.5);
+      const pairsCount = DIFFICULTY_LEVELS[difficulty];
 
-      const selectedCards = shuffledEntries.slice(0, 9).map((entry) => ({
-        id: entry.fields.image.uuid,
-        imageUrl: entry.fields.image.url,
-        name: entry.fields.name || "Card",
-      }));
+      const selectedCards = shuffledEntries
+        .slice(0, pairsCount)
+        .map((entry) => ({
+          id: entry.fields.image.uuid,
+          imageUrl: entry.fields.image.url,
+          name: entry.meta.name,
+        }));
 
       initializeGame(selectedCards);
       setLoading(false);
@@ -93,34 +121,76 @@ const GameBoard = () => {
     );
   };
 
+  const isGameStarted =
+    errors > 0 || matches > 0 || difficulty !== initialDifficulty;
+
+  const handleRestart = () => {
+    setFlippedCards([]);
+    setMatchedCards([]);
+    setErrors(0);
+    setMatches(0);
+    fetchCards();
+  };
+
   if (loading) {
-    return <div className="loading">Cargando...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   return (
-    <div className="game-board">
-      <div className="game-header">
-        <h2>Jugador: {playerName}</h2>
-        <div className="score-info">
-          <p>Errores: {errors}</p>
-          <p>Aciertos: {matches}</p>
+    <div className="game" role="main">
+      <div className="game__header">
+        <h2 className="game__title">Player: {playerName}</h2>
+        <div className="game__score" role="status" aria-live="polite">
+          <div className="game__difficulty">
+            <label htmlFor="difficulty">Difficulty: </label>
+            <select
+              id="difficulty"
+              className="game__difficulty-selector"
+              value={difficulty}
+              onChange={handleDifficultyChange}
+              tabIndex={0}
+            >
+              {Object.keys(DIFFICULTY_LEVELS).map((level) => (
+                <option key={level} value={level}>
+                  {`${level} (${DIFFICULTY_LEVELS[level] * 2} cards)`}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            className={"game__button"}
+            onClick={handleRestart}
+            tabIndex={0}
+            aria-label="Restart game"
+          >
+            Restart game
+          </button>
+          <p className="game__score-text" aria-live="polite">
+            Errors: {errors}
+          </p>
+          <p className="game__score-text" aria-live="polite">
+            Matches: {matches}
+          </p>
         </div>
       </div>
 
-      <div className="cards-container">
-        {cards.map((card) => (
+      <div className="game__grid" role="grid" aria-label="Memory game grid">
+        {cards.map((card, index) => (
           <Card
             key={card.uniqueId}
             card={card}
+            index={index}
             isFlipped={isCardFlipped(card)}
             onClick={() => handleCardClick(card)}
+            cardName={card.name}
           />
         ))}
       </div>
 
-      {matches === 9 && (
-        <div className="win-message">
-          ¡Felicitaciones {playerName}! Has completado el juego.
+      {matches === DIFFICULTY_LEVELS[difficulty] && (
+        <div className="game__message" role="alert" aria-live="assertive">
+          Congratulations {playerName}!<br />
+          You have completed the memory game.
         </div>
       )}
     </div>

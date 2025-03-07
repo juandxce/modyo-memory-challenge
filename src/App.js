@@ -8,6 +8,7 @@ const App = () => {
   return (
     <Router>
       <div className="app">
+        <h1 className="app__title">MEMORY GAME!</h1>
         <Routes>
           <Route path="/" element={<WelcomeScreen />} />
           <Route path="/game" element={<GameBoard />} />

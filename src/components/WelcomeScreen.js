@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import "../styles/WelcomeScreen.css";
 
 const WelcomeScreen = () => {
+  const [playerName, setPlayerName] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [name, setName] = useState(() => localStorage.getItem("playerName") || "");
 
   useEffect(() => {
     const storedName = localStorage.getItem("playerName");
@@ -15,25 +16,39 @@ const WelcomeScreen = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (name.trim()) {
-      localStorage.setItem("playerName", name.trim());
-      navigate("/game");
+    if (!playerName.trim()) {
+      setError("Please enter your name");
+      return;
     }
+
+    localStorage.setItem("playerName", playerName);
+
+    navigate("/game");
   };
 
   return (
     <div className="welcome-screen">
-      <h1>Welcome to the Game</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your name"
-          maxLength={20}
-          required
-        />
-        <button type="submit">Start Game</button>
+      <h1 className="welcome-screen__title">Welcome to Memory Game</h1>
+      <form onSubmit={handleSubmit} role="form" className="welcome-screen__form">
+        <div className="welcome-screen__input-group">
+          <label htmlFor="playerName" className="welcome-screen__label">
+            Enter your name:
+          </label>
+          <input
+            id="playerName"
+            type="text"
+            value={playerName}
+            onChange={(e) => {
+              setPlayerName(e.target.value);
+              setError("");
+            }}
+            className="welcome-screen__input"
+          />
+        </div>
+        {error && <p className="error-message">{error}</p>}
+        <button type="submit" className="welcome__button">
+          Start Game
+        </button>
       </form>
     </div>
   );

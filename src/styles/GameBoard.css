@@ -1,10 +1,10 @@
-.game-board {
+.game {
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.game-header {
+.game__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -12,89 +12,48 @@
   padding: 15px;
   background-color: #f5f5f5;
   border-radius: 8px;
+  gap: 20px;
 }
 
-.game-header h2 {
+.game__title {
   margin: 0;
   color: #333;
 }
 
-.score-info {
+.game__score {
   display: flex;
-  gap: 20px;
-  font-size: 1.2em;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-.score-info p {
+.game__score-text {
   font-weight: bold;
+  min-width: 100px;
 }
 
-.cards-container {
+.game__button {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.game__button:hover {
+  background-color: #45a049;
+}
+
+.game__grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 15px;
   padding: 20px;
 }
 
-.card {
-  width: 100%;
-  aspect-ratio: 1;
-  perspective: 1000px;
-  cursor: pointer;
-}
-
-.card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-
-.card.flipped .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card-front,
-.card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5em;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.card-front {
-  background-color: #2196f3;
-  color: white;
-}
-
-.card-front::after {
-  content: "?";
-  font-size: 2em;
-  color: white;
-}
-
-.card-back {
-  background-color: white;
-  transform: rotateY(180deg);
-  border: 2px solid #e0e0e0;
-}
-
-.card-back img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.win-message {
+.game__message {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -102,14 +61,14 @@
   background-color: rgba(255, 255, 255, 0.95);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   text-align: center;
   z-index: 1000;
   width: 90%;
   max-width: 400px;
 }
 
-.loading {
+.game__loading {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -118,49 +77,116 @@
   color: #666;
 }
 
+.difficulty-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.difficulty-selector {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.difficulty-selector:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.difficulty-container label {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Utility class for screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Media Queries */
 @media (max-width: 768px) {
-  .game-board {
+  .game {
     padding: 10px;
   }
 
-  .game-header {
+  .game__header {
     flex-direction: column;
     gap: 10px;
-    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
   }
 
-  .game-header h2 {
+  .game__title {
     font-size: 1.2em;
+    width: 100%;
   }
 
-  .cards-container {
+  .game__button {
+    width: 100%;
+  }
+
+  .game__grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     padding: 10px;
   }
 
-  .score-info {
+  .game__score {
     font-size: 1em;
     gap: 15px;
+  }
+
+  .difficulty-container {
+    width: 100%;
+  }
+
+  .difficulty-selector {
+    flex-grow: 1;
   }
 }
 
 @media (max-width: 480px) {
-  .score-info {
+  .game__header {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .game__score {
     font-size: 1em;
     gap: 15px;
   }
 
-  .cards-container {
+  .game__grid {
     gap: 8px;
     padding: 8px;
   }
 }
 
 @media (max-width: 375px) {
-  .cards-container {
-    gap: 6px;
-    padding: 6px;
+  .game {
+    padding: 5px;
   }
-} 
+
+  .game__header {
+    padding: 5px;
+    gap: 5px;
+  }
+
+  .game__grid {
+    gap: 5px;
+    padding: 5px;
+  }
+}
