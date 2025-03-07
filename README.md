@@ -2,6 +2,10 @@
 
 A React application built as part of the Modyo technical challenge.
 
+##Live preview:
+
+https://modyo-memory-challenge.vercel.app/
+
 ## Installation
 
 To get started with this project, follow these steps:
