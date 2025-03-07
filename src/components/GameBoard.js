@@ -141,8 +141,7 @@ const GameBoard = () => {
               tabIndex={0}
             >
               {Object.keys(DIFFICULTY_LEVELS).map((level) => (
-                <option key={level} value={level}
->
+                <option key={level} value={level}>
                   {`${level} (${DIFFICULTY_LEVELS[level] * 2} cards)`}
                 </option>
               ))}
@@ -180,7 +179,8 @@ const GameBoard = () => {
 
       {matches === DIFFICULTY_LEVELS[difficulty] && (
         <div className="game__message" role="alert" aria-live="assertive">
-          Congratulations {playerName}! You have completed the game.
+          Congratulations {playerName}!<br />
+          You have completed the memory game.
         </div>
       )}
     </div>

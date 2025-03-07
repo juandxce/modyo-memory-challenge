@@ -1,10 +1,16 @@
 import React from "react";
 import "../styles/Card.css";
 
-const Card = ({ card, isFlipped, onClick, index, cardName }) => {
+const Card = ({ card, isFlipped, isMatched, onClick, index, cardName }) => {
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" || e.key === " ") {
+    if (!isMatched && (e.key === "Enter" || e.key === " ")) {
       e.preventDefault();
+      onClick();
+    }
+  };
+
+  const handleClick = () => {
+    if (!isMatched) {
       onClick();
     }
   };
@@ -18,8 +24,10 @@ const Card = ({ card, isFlipped, onClick, index, cardName }) => {
 
   return (
     <div
-      className={`card ${isFlipped ? "card--flipped" : ""}`}
-      onClick={onClick}
+      className={`card ${isFlipped ? "card--flipped" : ""} ${
+        isMatched ? "matched" : ""
+      }`}
+      onClick={handleClick}
       onKeyPress={handleKeyPress}
       role="button"
       tabIndex={0}
@@ -28,7 +36,9 @@ const Card = ({ card, isFlipped, onClick, index, cardName }) => {
     >
       <div className="card__inner">
         <div className="card__index">{index + 1}</div>
-        <div className="card__face card__face--front" aria-hidden="true">?</div>
+        <div className="card__face card__face--front" aria-hidden="true">
+          ?
+        </div>
         <div className="card__face card__face--back" aria-hidden={!isFlipped}>
           <img className="card__image" src={card.imageUrl} alt={cardName} />
         </div>
