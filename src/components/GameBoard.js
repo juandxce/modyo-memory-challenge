@@ -54,7 +54,7 @@ const GameBoard = () => {
         .map((entry) => ({
           id: entry.fields.image.uuid,
           imageUrl: entry.fields.image.url,
-          name: entry.fields.name || "Card",
+          name: entry.meta.name,
         }));
 
       initializeGame(selectedCards);
@@ -141,18 +141,16 @@ const GameBoard = () => {
               tabIndex={0}
             >
               {Object.keys(DIFFICULTY_LEVELS).map((level) => (
-                <option key={level} value={level}>
+                <option key={level} value={level}
+>
                   {`${level} (${DIFFICULTY_LEVELS[level] * 2} cards)`}
                 </option>
               ))}
             </select>
           </div>
           <button
-            className={`game__button ${
-              !isGameStarted ? "game__button--disabled" : ""
-            }`}
+            className={"game__button"}
             onClick={handleRestart}
-            disabled={!isGameStarted}
             tabIndex={0}
             aria-label="Restart game"
           >
@@ -175,6 +173,7 @@ const GameBoard = () => {
             index={index}
             isFlipped={isCardFlipped(card)}
             onClick={() => handleCardClick(card)}
+            cardName={card.name}
           />
         ))}
       </div>
