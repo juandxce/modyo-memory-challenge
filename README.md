@@ -28,6 +28,24 @@ npm start
 
 The application will open in your default browser at `http://localhost:3000`
 
+## Building the Application for production
+
+To build the application:
+
+```bash
+npm run build
+```
+
+To serve the built application:
+
+```bash
+npm install -g serve
+```
+
+```bash
+serve -s build
+```
+
 ## Features
 
 - React-based frontend application

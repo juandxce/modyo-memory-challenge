@@ -1,9 +1,11 @@
 {
-  "name": "challenge-modyo",
+  "name": "memory-challenge-modyo",
+  "homepage": ".",
   "version": "1.0.0",
   "description": "modyo challenge",
   "main": "App.tsx",
   "scripts": {
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "start": "react-scripts start"
   },
