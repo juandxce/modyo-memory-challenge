@@ -10,6 +10,7 @@ const DIFFICULTY_LEVELS = {
 };
 
 const initialDifficulty = "Medium";
+const WINNING_SOUND = new Audio("/sounds/victory.mp3");
 
 const GameBoard = () => {
   const navigate = useNavigate();
@@ -32,6 +33,15 @@ const GameBoard = () => {
   useEffect(() => {
     fetchCards();
   }, []);
+
+  useEffect(() => {
+    if (matches === DIFFICULTY_LEVELS[difficulty]) {
+      console.log("WINNING_SOUND", WINNING_SOUND)
+      WINNING_SOUND.play().catch(error => {
+        console.warn("Error playing winning sound:", error);
+      });
+    }
+  }, [matches, difficulty]);
 
   const handleDifficultyChange = (e) => {
     const newDifficulty = e.target.value;
